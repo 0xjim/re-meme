@@ -1,5 +1,11 @@
 import { ApolloLink, Observable, Operation, FetchResult } from "@apollo/client";
-import { mockPublications } from "./publications";
+import {
+  getMockProfiles,
+  getMockPublicationById,
+  getMockPublicationByTxHash,
+  getShuffledMockPublications,
+  mockPublications,
+} from "./publications";
 
 /**
  * Extracts the top-level field name from the query's selection set.
@@ -23,37 +29,68 @@ const getQueryFieldName = (operation: Operation): string => {
 };
 
 const mockResolvers: Record<string, (operation: Operation) => any> = {
-  explorePublications: () => ({
-    explorePublications: {
-      items: mockPublications,
-      pageInfo: {
-        prev: null,
-        next: null,
-        totalCount: mockPublications.length,
-      },
-    },
-  }),
-
-  publication: (operation) => {
-    const pubId = operation.variables?.request?.publicationId;
-    const txHash = operation.variables?.request?.txHash;
-    const found =
-      mockPublications.find((p) => p.id === pubId) || mockPublications[0];
+  explorePublications: (operation) => {
+    const request = operation.variables?.request || {};
+    const seed = JSON.stringify({
+      sortCriteria: request.sortCriteria || "LATEST",
+      timestamp: request.timestamp || 0,
+      cursor: request.cursor || "",
+    });
+    const limit = typeof request.limit === "number" ? request.limit : undefined;
+    const items = getShuffledMockPublications(seed, limit);
     return {
-      publication: txHash ? mockPublications[0] : found,
+      explorePublications: {
+        items,
+        pageInfo: {
+          prev: null,
+          next: null,
+          totalCount: mockPublications.length,
+        },
+      },
     };
   },
 
-  publications: () => ({
-    publications: {
-      items: [],
-      pageInfo: {
-        prev: null,
-        next: null,
-        totalCount: 0,
+  publication: (operation) => {
+    const pubId = operation.variables?.request?.publicationId as string | undefined;
+    const txHash = operation.variables?.request?.txHash as string | undefined;
+    const publication = txHash
+      ? getMockPublicationByTxHash(txHash)
+      : getMockPublicationById(pubId);
+    return {
+      publication,
+    };
+  },
+
+  publications: (operation) => {
+    const request = operation.variables?.request || {};
+    const limit = typeof request.limit === "number" ? request.limit : mockPublications.length;
+    const seed = JSON.stringify({
+      commentsOf: request.commentsOf || "",
+      sources: request.sources || [],
+      cursor: request.cursor || "",
+    });
+    const items = getShuffledMockPublications(seed, limit);
+    return {
+      publications: {
+        items,
+        pageInfo: {
+          prev: null,
+          next: null,
+          totalCount: mockPublications.length,
+        },
       },
-    },
-  }),
+    };
+  },
+
+  profiles: (operation) => {
+    const request = operation.variables?.request || {};
+    const ownedBy = request.ownedBy as string | undefined;
+    return {
+      profiles: {
+        items: getMockProfiles(ownedBy),
+      },
+    };
+  },
 
   challenge: () => ({
     challenge: { text: "mock-challenge-text" },
@@ -75,12 +112,6 @@ const mockResolvers: Record<string, (operation: Operation) => any> = {
 
   enabledModuleCurrencies: () => ({
     enabledModuleCurrencies: [],
-  }),
-
-  profiles: () => ({
-    profiles: {
-      items: [],
-    },
   }),
 
   hasTxHashBeenIndexed: () => ({

@@ -7,6 +7,7 @@ import { useAccount } from 'wagmi'
 import { GoBackButton } from '../../components/Buttons/GoBackBtn'
 import PageLayout from '../../components/Layout'
 import { MemePreview } from '../../components/Meme/MemePreview'
+import { getMockMemePreviews } from '../../lib/mocks/publications'
 import { isNftImage, User } from '../../lib/models/User/user.model'
 import { removeSelectedProfile } from '../../lib/redux/slices/user'
 import { RootState } from '../../lib/redux/store'
@@ -23,26 +24,7 @@ const Profile: NextPage = (props: any) => {
     const router = useRouter();
     const profilePicture = selectedProfile?.picture && !isNftImage(selectedProfile.picture) ? selectedProfile.picture.original.url : "/assets/icons/profile.svg"
 
-    const mockMemes = [
-        {
-            id: 1,
-            src: "/assets/imgs/meme.png",
-            remixCount: 210,
-            publicationDate: new Date()
-        },
-        {
-            id: 2,
-            src: "/assets/imgs/distracted boyfriend.png",
-            remixCount: 210,
-            publicationDate: new Date()
-        },
-        {
-            id: 3,
-            src: "/assets/imgs/distracted boyfriend.png",
-            remixCount: 210,
-            publicationDate: new Date()
-        },
-    ]
+    const mockMemes = getMockMemePreviews(3)
 
     const handleLogout = () => {
         dispatch(removeSelectedProfile());

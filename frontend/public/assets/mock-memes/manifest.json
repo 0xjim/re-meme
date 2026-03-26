@@ -1,0 +1,32 @@
+{
+  "version": 1,
+  "source": "local-curated-mock-set",
+  "note": "Mock assets for deterministic local development demos.",
+  "items": [
+    { "file": "meme-01.png", "title": "Monday standup survival guide" },
+    { "file": "meme-02.png", "title": "POV: prod went down at 4:59 PM" },
+    { "file": "meme-03.png", "title": "When the merge passes on first try" },
+    { "file": "meme-04.png", "title": "Bug fixed by adding one semicolon" },
+    { "file": "meme-05.png", "title": "Frontend issue was actually backend" },
+    { "file": "meme-06.png", "title": "Backend issue was actually DNS" },
+    { "file": "meme-07.png", "title": "Your hotfix needs a hotfix" },
+    { "file": "meme-08.png", "title": "Reviewer asked for one tiny change" },
+    { "file": "meme-09.png", "title": "When cache invalidation finally works" },
+    { "file": "meme-10.png", "title": "Me reading smart contract comments" },
+    { "file": "meme-11.png", "title": "Unit tests green, integration tests red" },
+    { "file": "meme-12.png", "title": "Wallet connected, soul disconnected" },
+    { "file": "meme-13.png", "title": "Trying to explain async to PM" },
+    { "file": "meme-14.png", "title": "The sprint starts tomorrow energy" },
+    { "file": "meme-15.png", "title": "Deployment Friday confidence" },
+    { "file": "meme-16.png", "title": "Mainnet gas fees jump scare" },
+    { "file": "meme-17.png", "title": "When spec says edge cases omitted" },
+    { "file": "meme-18.png", "title": "Retrospective: we learned nothing" },
+    { "file": "meme-19.png", "title": "Auth bug only in production" },
+    { "file": "meme-20.png", "title": "Feature flagged into oblivion" },
+    { "file": "meme-21.png", "title": "Wen design signoff" },
+    { "file": "meme-22.png", "title": "The loading spinner of truth" },
+    { "file": "meme-23.png", "title": "Patch looked harmless in staging" },
+    { "file": "meme-24.png", "title": "When pagination eats your records" },
+    { "file": "meme-25.png", "title": "GraphQL schema changed overnight" }
+  ]
+}
