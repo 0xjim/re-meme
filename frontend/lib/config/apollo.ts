@@ -14,7 +14,9 @@ import { setContext } from "@apollo/client/link/context";
 import result from "../models/lensApi.model";
 import { store } from "../redux/store";
 import apolloLogger from 'apollo-link-logger'
+import { mockLink } from "../mocks/mockLink";
 
+const USE_MOCK = true
 
 const isServer = typeof window === 'undefined'
 
@@ -72,6 +74,13 @@ const authLink = setContext(() => {
 let _spaClient : ApolloClient<NormalizedCacheObject> | null = null
 
 export const generateApolloClient = () => {
+  if(USE_MOCK) {
+    return new ApolloClient({
+      ssrMode: isServer,
+      cache: new InMemoryCache({}),
+      link: mockLink,
+    })
+  }
   if(isServer) {
     return new ApolloClient({
       ssrMode: true,
@@ -103,7 +112,7 @@ export const generateApolloClient = () => {
 export const ssrClient = new ApolloClient({
     ssrMode: true,
     cache: new InMemoryCache({}),
-    link: ApolloLink.from([
+    link: USE_MOCK ? mockLink : ApolloLink.from([
       apolloLogger,
       httpLink
     ])

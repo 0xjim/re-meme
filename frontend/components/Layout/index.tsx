@@ -4,6 +4,7 @@ import { Container } from "react-bootstrap";
 import { useSelector } from "react-redux";
 import { ConnectionBox } from "./ConnectionBox";
 import { RootState } from "../../lib/redux/store";
+import { DeprecationBanner } from "../DeprecationBanner";
 
 type PageLayoutProps = {
     children: React.ReactNode,
@@ -15,6 +16,7 @@ const PageLayout = ({ children }: PageLayoutProps) => {
 
     return (
         <div className="min-h-screen flex flex-col">
+            <DeprecationBanner />
             <Header />
             <main className="mb-[120px]">
                 <Container fluid="md" className='h-full'>

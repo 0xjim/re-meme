@@ -15,12 +15,14 @@ import { createWrapper } from 'next-redux-wrapper'
 import imageSliceReducer, { ImageSlice } from './slices/image'
 import authSliceReducer, { AuthSlice } from './slices/auth'
 import ImageSizeSliceReducer, { ImageSizeSlice } from './slices/imagesize'
+import refreshSliceReducer, { RefreshSlice } from './slices/refresh'
 
 const rootReducer = combineReducers({
     user: selectedUserReducer,
     image: imageSliceReducer,
     auth: authSliceReducer,
-    imagesize: ImageSizeSliceReducer
+    imagesize: ImageSizeSliceReducer,
+    refresh: refreshSliceReducer
 })
 
 export let store;
@@ -58,7 +60,8 @@ export interface RootState {
     user: UserState,
     image: ImageSlice,
     auth: AuthSlice,
-    imagesize: ImageSizeSlice
+    imagesize: ImageSizeSlice,
+    refresh: RefreshSlice
 }
 
 export const wrapper = createWrapper(makeStore, { debug: true })
