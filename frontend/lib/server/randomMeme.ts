@@ -46,17 +46,22 @@ export const getRandomMemePublication = async (
   }
 
   if (!process.env.NEXT_PUBLIC_BLACKLIST_OFF) {
-    let isBlacklisted = await getBlacklistedFromDb(selectedPublication.id);
-    let blacklistAttempts = 0;
+    try {
+      let isBlacklisted = await getBlacklistedFromDb(selectedPublication.id);
+      let blacklistAttempts = 0;
 
-    while (isBlacklisted.blacklisted && blacklistAttempts < maxAttempts) {
-      selectedPublication = items[getRandomNumber(items.length)];
-      if (excludePublicationId && items.length > 1 && selectedPublication.id === excludePublicationId) {
+      while (isBlacklisted.blacklisted && blacklistAttempts < maxAttempts) {
+        selectedPublication = items[getRandomNumber(items.length)];
+        if (excludePublicationId && items.length > 1 && selectedPublication.id === excludePublicationId) {
+          blacklistAttempts += 1;
+          continue;
+        }
+        isBlacklisted = await getBlacklistedFromDb(selectedPublication.id);
         blacklistAttempts += 1;
-        continue;
       }
-      isBlacklisted = await getBlacklistedFromDb(selectedPublication.id);
-      blacklistAttempts += 1;
+    } catch (_error) {
+      // If blacklist storage is unavailable (e.g. missing DynamoDB credentials),
+      // fail open and keep serving memes instead of crashing SSR/API functions.
     }
   }
 

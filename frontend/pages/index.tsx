@@ -48,7 +48,12 @@ const Home = ({ publication }: HomeProps) => {
 }
 
 export const getServerSideProps = async () => {
-  const selectedPublication = await getRandomMemePublication()
+  let selectedPublication: PublicationData | null = null
+  try {
+    selectedPublication = await getRandomMemePublication()
+  } catch (_error) {
+    selectedPublication = null
+  }
   return { props: {
     publication: selectedPublication
   }}
