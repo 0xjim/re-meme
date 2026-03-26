@@ -18,14 +18,16 @@ export const RemixShareBox: React.FC<RemixShareBoxProps> = ({ publication }) => 
         setImageHover(false)
     }
 
+    const baseUrl = typeof window !== "undefined" ? window.location.origin : selectedEnvironment.appUrl
+
     const handleShare = () => {
-        const url = `${selectedEnvironment.appUrl}/meme/${publication.id}`
+        const url = `${baseUrl}/meme/${publication.id}`
         navigator.clipboard.writeText(url)
         setImageHover(true)
     }
 
     const handleShareTwitter = () => {
-        window.open(`https://twitter.com/intent/tweet?text=Check%20out%20this%20awesome%20on-chain%20meme%20I%20found%20on%20re:meme:%20https://rememe.lol/${publication.id}`, "_blank")
+        window.open(`https://twitter.com/intent/tweet?text=Check%20out%20this%20awesome%20on-chain%20meme%20I%20found%20on%20re:meme:%20${encodeURIComponent(`${baseUrl}/meme/${publication.id}`)}`, "_blank")
     }
 
     const handleDownload = async () => {

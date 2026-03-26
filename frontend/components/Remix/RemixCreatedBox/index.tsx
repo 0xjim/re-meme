@@ -26,14 +26,16 @@ export const RemixCreatedBox: React.FC<RemixShareBoxProps> = ({ meme }) => {
         setImageHover(false)
     }
 
+    const baseUrl = typeof window !== "undefined" ? window.location.origin : selectedEnvironment.appUrl
+
     const handleShare = () => {
-        const url = `${selectedEnvironment.appUrl}/meme/${meme.id}`
+        const url = `${baseUrl}/meme/${meme.id}`
         navigator.clipboard.writeText(url)
         setImageHover(true)
     }
 
     const handleShareTwitter = () => {
-        window.open(`https://twitter.com/intent/tweet?text=Just%20made%20a%20meme%20on%20Lens%20with%20re:meme:%20https://rememe.lol/${meme.id}`, "_blank")
+        window.open(`https://twitter.com/intent/tweet?text=Just%20made%20a%20meme%20on%20Lens%20with%20re:meme:%20${encodeURIComponent(`${baseUrl}/meme/${meme.id}`)}`, "_blank")
     }
 
     const handleDownload = async () => {
