@@ -36,8 +36,19 @@ export const RemixCreatedBox: React.FC<RemixShareBoxProps> = ({ meme }) => {
         window.open(`https://twitter.com/intent/tweet?text=Just%20made%20a%20meme%20on%20Lens%20with%20re:meme:%20https://rememe.lol/${meme.id}`, "_blank")
     }
 
-    const handleDownload = () => {
-        FileSaver.saveAs(memeSrc, 'meme.jpeg')
+    const handleDownload = async () => {
+        const mimeType = meme.metadata.media[0].original.mimeType || "image/jpeg"
+        const extension = mimeType.includes("png") ? "png" : mimeType.includes("webp") ? "webp" : "jpeg"
+        const filename = `meme-${meme.id.replace(/[^a-zA-Z0-9-_]/g, "-")}.${extension}`
+
+        try {
+            const response = await fetch(memeSrc)
+            if (!response.ok) throw new Error("Failed to fetch meme")
+            const blob = await response.blob()
+            FileSaver.saveAs(blob, filename)
+        } catch (_error) {
+            FileSaver.saveAs(memeSrc, filename)
+        }
     }
 
     return (

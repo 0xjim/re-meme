@@ -8,7 +8,11 @@ export default async function handler(_req: NextApiRequest, res: NextApiResponse
   }
 
   try {
-    const publication = await getRandomMemePublication();
+    const excludePublicationId =
+      typeof _req.query.excludePublicationId === "string"
+        ? _req.query.excludePublicationId
+        : undefined;
+    const publication = await getRandomMemePublication(excludePublicationId);
     if (!publication) {
       res.status(404).json({ publication: null });
       return;

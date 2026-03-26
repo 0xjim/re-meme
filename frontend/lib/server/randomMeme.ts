@@ -11,7 +11,9 @@ import { getBlacklistedFromDb } from "../../pages/api/blacklist";
 const getRandomNumber = (max: number) => Math.floor(Math.random() * max);
 const sortCriterias = ["TOP_COMMENTED", "TOP_COLLECTED", "LATEST"];
 
-export const getRandomMemePublication = async (): Promise<PublicationData | null> => {
+export const getRandomMemePublication = async (
+  excludePublicationId?: string,
+): Promise<PublicationData | null> => {
   const client = generateApolloClient();
   const { data } = await client.query<ExplorePublicationsData, ExplorePublicationsParams>({
     query: EXPLORE_PUBLICATIONS,
@@ -30,16 +32,31 @@ export const getRandomMemePublication = async (): Promise<PublicationData | null
   if (!items.length) return null;
 
   let selectedPublication = items[getRandomNumber(items.length)];
+  let attempts = 0;
+  const maxAttempts = items.length * 2;
+
+  while (
+    excludePublicationId &&
+    items.length > 1 &&
+    selectedPublication.id === excludePublicationId &&
+    attempts < maxAttempts
+  ) {
+    selectedPublication = items[getRandomNumber(items.length)];
+    attempts += 1;
+  }
 
   if (!process.env.NEXT_PUBLIC_BLACKLIST_OFF) {
     let isBlacklisted = await getBlacklistedFromDb(selectedPublication.id);
-    let attempts = 0;
-    const maxAttempts = items.length * 2;
+    let blacklistAttempts = 0;
 
-    while (isBlacklisted.blacklisted && attempts < maxAttempts) {
+    while (isBlacklisted.blacklisted && blacklistAttempts < maxAttempts) {
       selectedPublication = items[getRandomNumber(items.length)];
+      if (excludePublicationId && items.length > 1 && selectedPublication.id === excludePublicationId) {
+        blacklistAttempts += 1;
+        continue;
+      }
       isBlacklisted = await getBlacklistedFromDb(selectedPublication.id);
-      attempts += 1;
+      blacklistAttempts += 1;
     }
   }
 

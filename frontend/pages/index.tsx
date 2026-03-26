@@ -25,7 +25,9 @@ const Home = ({ publication }: HomeProps) => {
         didMount.current = true
         return
       }
-      axios.get<{ publication: PublicationData | null }>('/api/random-meme')
+      axios.get<{ publication: PublicationData | null }>('/api/random-meme', {
+        params: { excludePublicationId: currentPublication?.id },
+      })
       .then(({ data }) => {
         if (data.publication) {
           setCurrentPublication(data.publication)

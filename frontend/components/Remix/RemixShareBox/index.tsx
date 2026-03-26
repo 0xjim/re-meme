@@ -28,8 +28,19 @@ export const RemixShareBox: React.FC<RemixShareBoxProps> = ({ publication }) => 
         window.open(`https://twitter.com/intent/tweet?text=Check%20out%20this%20awesome%20on-chain%20meme%20I%20found%20on%20re:meme:%20https://rememe.lol/${publication.id}`, "_blank")
     }
 
-    const handleDownload = () => {
-        FileSaver.saveAs(memeUrl, 'meme.jpeg')
+    const handleDownload = async () => {
+        const mimeType = publication.metadata.media[0].original.mimeType || "image/jpeg"
+        const extension = mimeType.includes("png") ? "png" : mimeType.includes("webp") ? "webp" : "jpeg"
+        const filename = `meme-${publication.id.replace(/[^a-zA-Z0-9-_]/g, "-")}.${extension}`
+
+        try {
+            const response = await fetch(memeUrl)
+            if (!response.ok) throw new Error("Failed to fetch meme")
+            const blob = await response.blob()
+            FileSaver.saveAs(blob, filename)
+        } catch (_error) {
+            FileSaver.saveAs(memeUrl, filename)
+        }
     }
 
     return (

@@ -132,7 +132,13 @@ const toProfile = (template: (typeof profileTemplates)[number], index: number) =
 
 const baseTime = Date.parse("2025-12-01T12:00:00.000Z");
 
-const curatedMockMemes = manifest.items;
+type MockMemeEntry = {
+  file: string;
+  title: string;
+  template?: string;
+};
+
+const curatedMockMemes: MockMemeEntry[] = manifest.items;
 
 const extraTemplateMemes = [
   {
@@ -203,7 +209,7 @@ const extraTemplateMemes = [
   },
 ];
 
-const generatedTemplateCaptionMemes = extraTemplateMemes.flatMap((templateMeme) =>
+const generatedTemplateCaptionMemes: MockMemeEntry[] = extraTemplateMemes.flatMap((templateMeme) =>
   templateMeme.captions.map((caption) => ({
     file: templateMeme.file,
     title: caption,
@@ -211,7 +217,7 @@ const generatedTemplateCaptionMemes = extraTemplateMemes.flatMap((templateMeme) 
   })),
 );
 
-const allMockMemes = [...curatedMockMemes, ...generatedTemplateCaptionMemes];
+const allMockMemes: MockMemeEntry[] = [...curatedMockMemes, ...generatedTemplateCaptionMemes];
 
 const toMockMediaUrl = (file: string) =>
   file.startsWith("http://") || file.startsWith("https://")
@@ -322,7 +328,7 @@ export const getMockProfiles = (ownedBy?: string) => {
 
 export const getMockMemePreviews = (limit = 3) => {
   const shuffled = seededShuffle(mockPublicationRecords, "profile-previews");
-  const selected = [];
+  const selected: (typeof mockPublicationRecords)[number][] = [];
   const seenMediaUrls = new Set<string>();
 
   for (const publication of shuffled) {
