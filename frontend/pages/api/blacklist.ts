@@ -1,7 +1,7 @@
 // @ts-ignore
 import type { NextApiRequest, NextApiResponse } from 'next';
 // @ts-ignore
-import dynamodb from '../../lib/dynamodb';
+import dynamodb, { hasDynamoCredentials } from '../../lib/dynamodb';
 
 export default async function handler (_req: NextApiRequest, res: NextApiResponse) {
   const now = new Date().getTime();
@@ -77,3 +77,5 @@ const handleGet = async (postId: string, res: NextApiResponse) => {
     return res.status(404);
   }
 };
+
+export const hasBlacklistTable = hasDynamoCredentials;

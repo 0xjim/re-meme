@@ -7,7 +7,7 @@ import { generateApolloClient } from "../../../lib/config/apollo";
 import { GET_PUBLICATION } from "../../../lib/queries/publication";
 import { GetPublicationData, GetPublicationParams } from "../../../lib/models/Publication/publication.model";
 import axios from "axios";
-import { getBlacklistedFromDb } from "../../api/blacklist";
+import { getBlacklistedFromDb, hasBlacklistTable } from "../../api/blacklist";
 
 const MemePage = ({ publication }) => {
     const router = useRouter()
@@ -34,12 +34,15 @@ export const getServerSideProps = async (context) => {
 
   const { publicationId } = context.query
 
-  if(!process.env.NEXT_PUBLIC_BLACKLIST_OFF) {
+  const shouldCheckBlacklist =
+    !process.env.NEXT_PUBLIC_BLACKLIST_OFF && hasBlacklistTable
+
+  if (shouldCheckBlacklist) {
     try {
       const isBlacklisted = await getBlacklistedFromDb(publicationId)
       if(isBlacklisted.blacklisted) return { notFound: true }
     } catch {
-      return { notFound: true }
+      console.warn("[meme page] blacklist lookup failed, falling back to visible meme")
     }
   }
 
